@@ -5,13 +5,15 @@
  */
 module.exports = app => {
   const { router, controller } = app;
+
   router.get('/', controller.home.index);
   router.get('/wx', controller.wx.index);
 
   /**
    * 用户模块
    */
-  router.post('/register',controller.user.register); // 注册用户
+  router.post('/login',controller.user.login); // 用户登录
+  router.post('/register',controller.user.register); // 用户注册
 
   /**
    * 微信文章模块

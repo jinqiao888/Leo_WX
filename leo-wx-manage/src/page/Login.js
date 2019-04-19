@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Icon, Input, Button, Checkbox } from 'antd';
 import { util_fetch } from '../util/fetch';
+import { URL } from '../config/url';
 
 class Login extends Component{
     constructor (props){
@@ -12,10 +13,12 @@ class Login extends Component{
         e.preventDefault()
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('表单数据: ', values);
-                const options = util_fetch('POST', values)
+                const options = util_fetch.setHeaders('POST', values)
                 fetch(URL.BASEURL + URL.USER_LOGIN, options)
-                    .then(res => res.json())
+                    .then(res => {
+                        console.log(res)
+                        // res.json()
+                    })
                     .then(data => {
                         console.log('登录结果数据',data)
                     })
@@ -44,12 +47,6 @@ class Login extends Component{
                     )}
                 </Form.Item>
                 <Form.Item>
-                    {getFieldDecorator('remember', {
-                        valuePropName: 'checked',
-                        initialValue: true,
-                    })(
-                        <Checkbox>记住密码</Checkbox>
-                    )}
                     <a className="login-form-forgot" href="">忘记密码？</a>
                     <Button type="primary" htmlType="submit" className="login-form-button">
                         登录
