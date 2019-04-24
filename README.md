@@ -1,3 +1,29 @@
+**运行项目说明：**   
+
+* 数据库 :   
+
+```
+mongod --dbpath c:\leo\app\mongodb\data\db
+```
+
+* leo-wx-backend :  
+
+```
+npm run dev
+```
+
+* leo-wx-manage :  
+
+```
+npm start
+```
+
+* leo-wx-backend :  
+
+```
+npm run dev:具体环境
+```
+
 ## 一、项目介绍
 **主要目的**：用于管理我的微信公众号“**前端自习课**”的文章内容。   
 **主要功能**：   

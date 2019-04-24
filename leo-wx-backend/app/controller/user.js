@@ -1,3 +1,9 @@
+/**
+ * Controller - user
+ * @author leo
+ * @created 2019-04-22
+ * @updated 2019-04-22 重构 异常错误先不处理
+ */
 module.exports = app => {
   // 定义创建接口的请求参数规则
   const createRule = {
@@ -6,43 +12,28 @@ module.exports = app => {
   };
   
   class UserController extends app.Controller {
-    /**
-     * update: 2019.04.18
-     * TODO: add authentication for login & registre 
-     */
     async register (){
+      const { ctx } = this
       try {
-        const body = this.ctx.request.body
-        const hasUser = await this.ctx.service.user.getUser(body.account)
-        if(hasUser && hasUser.length > 0){
-          // this.ctx.throw(400, '帐号已存在，请修改', {data:body})
-            this.ctx.body = {
-              code: 2002,
-              message: `帐号已存在，请修改`,
-              data: body,
-              success: false
-          }
-          return 
-        }else{
-          const status = this.ctx.service.user.register(body)
-          if(status){
-            this.ctx.body = {
-                code: 200,
-                message: `帐号注册成功`,
-                data: body,
-                success: true
-            }
-          }else{
-            this.ctx.body = {
-                code: 2001,
-                message: `帐号注册失败`,
-                data: body,
-                success: false
-            }
-          }
+        const body = ctx.request.body
+        const hasUser = await ctx.service.user.getUser(body.account)
+        if(hasUser && hasUser.length > 0) throw new Error({message:'帐号已存在，请修改'})
+        const status = ctx.service.user.register(body)
+        if(!status) throw new Error({message:'帐号注册失败'})
+        ctx.body = {
+          code: 200,
+          message: `帐号注册成功`,
+          data: body,
+          success: true
         }
       } catch (error) {
-        console.log(error)
+        return this.fail(ctx.ERROR_CODE, 'aaaaaaaa')
+        console.log('error',  error)        
+        ctx.body = {
+          code: 400,
+          data: {error},
+          success: false
+        }
       }
     }
 

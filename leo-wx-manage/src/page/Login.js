@@ -15,10 +15,7 @@ class Login extends Component{
             if (!err) {
                 const options = util_fetch.setHeaders('POST', values)
                 fetch(URL.BASEURL + URL.USER_LOGIN, options)
-                    .then(res => {
-                        console.log(res)
-                        // res.json()
-                    })
+                    .then(res => res.json())
                     .then(data => {
                         console.log('登录结果数据',data)
                     })
