@@ -21,6 +21,8 @@ module.exports = app => {
   // router.post('/wx/add', controller.wx.add); // 添加文章
   router.post('/wx/add', controller.wx.add); // 添加文章
   router.post('/wx/preview', controller.wx.preview); // 预览文章
+  router.post('/wx/remove', controller.wx.remove); // 删除指定id的文章
+  
   router.get('/wx/getList', controller.wx.getList); // 获取文章列表
   router.get('/wx/list', controller.wx.list); // 获取文章列表 含 分页参数
 };

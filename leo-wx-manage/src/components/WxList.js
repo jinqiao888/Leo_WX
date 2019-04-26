@@ -1,43 +1,65 @@
 import React from 'react';
-import { Table } from 'antd';
+import { Table, Button, Tag, Icon, message} from 'antd';
 import { URL } from '../config/url';
+import { withRouter } from 'react-router';
+import { util_fetch } from '../util/fetch';
+
+import DetaulLogo from '../images/wx/default_wx.png';
 
 
-const columns = [{
-    title: '序号',
-    dataIndex: '_id',
-    width: 200,
-  }, {
-    title: '标题',
-    dataIndex: 'title',
-    width: 300,
-    render: (text, record) => <a target="_blank" href={record.url ? record.url : 'javascritp:;'} >{record.title}</a>,
-  }, {
-    title: '公众号名称',
-    dataIndex: 'gzhName',
-    width: 100,
-  }, {
-    title: '公众号介绍',
-    dataIndex: 'gzhIntroduce',
-    width: 300,
-  }, {
-    title: '封面',
-    dataIndex: 'header',
-    width: 200,
-    align: 'center',
-    render: (text, record) => <img className="" src={record.header ? record.header :''} />
-  }
-];
-
-export default class WxListComponent extends React.Component {
+class WxListComponent extends React.Component {
     constructor(props){
         super(props);
         this.state = {
             data: [],
             loading : false,
             pagination: {},
+            columns : [{
+                title: '序号',
+                dataIndex: '_id',
+                align: 'center',
+                width: '15%',
+              }, {
+                title: '标题',
+                dataIndex: 'title',
+                align: 'center',
+                width: '30%',
+                render: (text, record) => <a target="_blank" href={record.url ? record.url : 'javascritp:;'} >{record.title}</a>,
+              }, {
+                title: '公众号名称',
+                dataIndex: 'gzhName',
+                align: 'center',
+                width: '10%',
+                render: tags => tags ==='前端自习课' ? <Tag color='green'>{tags}</Tag> : <Tag color='geekblue'>{tags}</Tag>
+              }, {
+                title: '公众号介绍',
+                dataIndex: 'gzhIntroduce',
+                align: 'center',
+                width: '20%',
+              }, {
+                title: '封面',
+                dataIndex: 'header',
+                align: 'center',
+                width: '10%',
+                render: (text, record) => <img src={record.header ? record.header :DetaulLogo} />
+              }, {
+                title: '操作',
+                align: 'center',
+                width: '10%',
+                render: (text, record) => (
+                    <span>
+                        <Button 
+                            type="danger" shape="round" icon="delete"
+                            onClick={e => this.delList(record)}
+                        ></Button>
+                    </span>
+                )
+              }
+            ]
         };
-        this.getList = this.getList.bind(this);
+        this.getList = this.getList.bind(this)
+        this.addList = this.addList.bind(this)
+        this.delList = this.delList.bind(this)
     }
     
     componentDidMount(){
@@ -47,11 +69,11 @@ export default class WxListComponent extends React.Component {
         fetch(URL.BASEURL + URL.WX_URL + '/getList', {method:'GET'})
             .then(res => res.json())
             .then(data => {
+                console.log(data)
                 this.setState({
                     data: data.data.list,
                     loading: true
                 })
-                console.log(data.data.list)
             })
             .catch(e => console.log('错误:', e))
     }
@@ -61,13 +83,30 @@ export default class WxListComponent extends React.Component {
         this.setState({
             pagination: pager
         })
-        console.log(pager)
     }
-    
+    addList(){
+        console.log(this)
+        this.props.history.push('/wx_add')
+    }
+
+    delList(data){
+        const options = util_fetch.setHeaders('POST', {id: data._id})
+        fetch(URL.BASEURL + URL.WX_URL + '/remove', options)
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                data.code === 200 ? message.success(data.message) : message.warn(data.message)
+            })
+            .catch(e => message.warn(data.message))
+    }
     render (){
+        const {columns} = this.state
         return (
             <div>
+                <Button onClick={this.addList} type="primary" >添加文章</Button>
+                <br />
                 <Table className="wx-list-table"
+                    scroll={{ y: 430 }}
                     columns={columns} 
                     dataSource={this.state.data} 
                     rowKey='_id'
@@ -77,3 +116,4 @@ export default class WxListComponent extends React.Component {
         )
     }
 }
+export default withRouter(WxListComponent);

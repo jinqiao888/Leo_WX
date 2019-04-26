@@ -1,3 +1,5 @@
+const ObjectId = require('mongodb').ObjectId;
+
 module.exports = app => {
   class WxService extends app.Service {
     /**
@@ -40,13 +42,15 @@ module.exports = app => {
      */
     async find (option){
       try{
-        const { pageSize = 10, pageIndex = 1, sort = -1 } = option
-        let list  = await this.ctx.model.Wx.find().sort({_id: sort}).limit(pageSize * pageIndex)
+        // const { pageSize = 10, pageIndex = 1, sort = -1 } = option
+        // const { sort = -1} = option
+        // let list  = await this.ctx.model.Wx.find().sort({_id: sort}).limit(pageSize * pageIndex)
+        let list  = await this.ctx.model.Wx.find().sort({_id: -1})
         let total = await this.ctx.model.Wx.count()
         return {
-          pageSize,
-          pageIndex,
-          sort,
+          // pageSize,
+          // pageIndex,
+          // sort,
           list, 
           total
         }
@@ -57,10 +61,10 @@ module.exports = app => {
 
     /**
      * 删除一条记录
-     * @param {object} obj 查询语句
+     * @param {object} id 删除的id
      */
-    async remove (obj){
-
+    async remove (id){
+      return await this.ctx.model.Wx.remove({'_id': new ObjectId(id)})
     }
 
     /**

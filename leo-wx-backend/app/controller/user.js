@@ -13,29 +13,41 @@ module.exports = app => {
   
   class UserController extends app.Controller {
     async register (){
-      const { ctx } = this
       try {
-        const body = ctx.request.body
-        const hasUser = await ctx.service.user.getUser(body.account)
-        if(hasUser && hasUser.length > 0) throw new Error({message:'帐号已存在，请修改'})
-        const status = ctx.service.user.register(body)
-        if(!status) throw new Error({message:'帐号注册失败'})
-        ctx.body = {
-          code: 200,
-          message: `帐号注册成功`,
-          data: body,
-          success: true
+        const body = this.ctx.request.body
+        const hasUser = await this.ctx.service.user.getUser(body.account)
+        if(hasUser && hasUser.length > 0){
+          // this.ctx.throw(400, '帐号已存在，请修改', {data:body})
+            this.ctx.body = {
+              code: 2002,
+              message: `帐号已存在，请修改`,
+              data: body,
+              success: false
+          }
+          return 
+        }else{
+          const status = this.ctx.service.user.register(body)
+          if(status){
+            this.ctx.body = {
+                code: 200,
+                message: `帐号注册成功`,
+                data: body,
+                success: true
+            }
+          }else{
+            this.ctx.body = {
+                code: 2001,
+                message: `帐号注册失败`,
+                data: body,
+                success: false
+            }
+          }
         }
       } catch (error) {
-        return this.fail(ctx.ERROR_CODE, 'aaaaaaaa')
-        console.log('error',  error)        
-        ctx.body = {
-          code: 400,
-          data: {error},
-          success: false
-        }
+        console.log(error)
       }
     }
+
 
     async login (){
       try {

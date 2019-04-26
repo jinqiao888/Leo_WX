@@ -3,7 +3,7 @@ import { Form, Icon, Input, Button, Checkbox, Modal } from 'antd';
 import { util_fetch } from '../util/fetch';
 import { URL } from '../config/url';
 
-class Login extends Component{
+class Register extends Component{
     constructor (props){
         super(props);
         this.state = {
@@ -78,6 +78,6 @@ class Login extends Component{
 }
 
 
-const MyLoginForm = Form.create({ name: 'normal_login' })(Login)
+const MyRegisterForm = Form.create({ name: 'normal_login' })(Register)
 
-export default MyLoginForm
+export default MyRegisterForm
